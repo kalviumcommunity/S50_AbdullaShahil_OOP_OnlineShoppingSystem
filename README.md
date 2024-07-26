@@ -1,4 +1,4 @@
-## Online Shopping System
+# Online Shopping System
 
 ## Table of Contents
 1. [Project Description](#project-description)
@@ -37,7 +37,7 @@ The **Online Shopping System** is a simulation of a digital shopping platform wh
   - Implement classes such as `Customer`and `Product` to encapsulate data and behaviors.
 
 - **Inheritance**
-  - Allows further inheritance specialization for types of customers or products (e.g., `PremiumUser` inheriting from `Customer`).
+  - Allows further inheritance specialization for types of customers or products (e.g., 'PremiumUser' inheriting from 'Customer').
 
 - **Polymorphism**
   - Can apply polymorphism for different payment methods or shipping options derived from a base class.
