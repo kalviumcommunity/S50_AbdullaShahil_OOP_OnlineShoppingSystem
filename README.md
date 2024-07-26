@@ -12,27 +12,20 @@ The **Online Shopping System** is a simulation of a digital shopping platform wh
 ## Features
 
 - **User Management**
-  - Register, login, and manage user profiles.
+  - Login, and purchase using your account.
 
 - **Product Management**
-  - Display detailed product information, including name, price, description, and availability.
+  - Display detailed product information, including name and price.
 
 - **Shopping Cart**
   - Add products to the cart.
-  - View and manage cart contents, including updating quantities and removing items.
+  - View and manage cart contents, including removing items.
 
 - **Order Processing**
-  - Complete the checkout process, review orders, and enter shipping details.
-
-- **Search and Filters**
-  - Search for products by name or category.
-  - Filter and sort search results.
-
-- **Payment Integration**
-  - Securely process transactions through a payment gateway.
+  - Complete the checkout process and review orders.
 
 - **Admin Panel**
-  - Admin capabilities for managing products, user accounts, and orders.
+  - Admin capabilities for having a user account and orders.
 
 ## Technologies Used
 
@@ -41,13 +34,13 @@ The **Online Shopping System** is a simulation of a digital shopping platform wh
 ## OOP Concepts Application
 
 - **Classes and Objects**
-  - Implement classes such as `User`, `Product`, `Cart`, and `Order` to encapsulate data and behaviors.
+  - Implement classes such as `Customer`and `Product` to encapsulate data and behaviors.
 
 - **Inheritance**
-  - Use inheritance for specialized types of users or products (e.g., `PremiumUser` inheriting from `User`).
+  - Allows further inheritance specialization for types of customers or products (e.g., `PremiumUser` inheriting from `Customer`).
 
 - **Polymorphism**
-  - Apply polymorphism for different payment methods or shipping options derived from a base class.
+  - Can apply polymorphism for different payment methods or shipping options derived from a base class.
 
 - **Encapsulation**
   - Encapsulate data within classes, providing controlled access through public methods and hiding internal details.
