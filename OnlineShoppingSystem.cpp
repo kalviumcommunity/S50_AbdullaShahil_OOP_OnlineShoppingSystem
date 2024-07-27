@@ -40,8 +40,8 @@ public:
     }
 
     void removeFromCart(const string& productName) {
-        // Use traditional for loop with index-based access
-        for (size_t i = 0; i < cart.size(); ++i) {
+
+        for (int i = 0; i < cart.size(); ++i) {
             if (cart[i].getName() == productName) {
                 cart.erase(cart.begin() + i);
                 cout << productName << " removed from cart." << endl;
@@ -105,7 +105,7 @@ int main() {
     bool done = false;
 
     cout << "\nAvailable Products:" << endl;
-    for (size_t i = 0; i < productList.size(); ++i) {
+    for (int i = 0; i < productList.size(); ++i) {
         cout << i + 1 << ". ";
         productList[i].displayDetails();
     }
