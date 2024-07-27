@@ -25,9 +25,7 @@ public:
         cout << "-> " << name << " - Rs." << fixed << setprecision(2) << price << endl;
     }
 
-    bool operator==(const Product& other) const {
-        return name == other.name && price == other.price;
-    }
+
 };
 
 
