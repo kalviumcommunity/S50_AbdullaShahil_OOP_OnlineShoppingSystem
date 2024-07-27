@@ -55,16 +55,15 @@ public:
         cout << "-------------------------------" << endl;
         cout << "Cart items for " << username << ":" << endl;
         cout << "-------------------------------" << endl;
-        // Use traditional for loop with index-based access
-        for (size_t i = 0; i < cart.size(); ++i) {
+
+        for (int i = 0; i < cart.size(); ++i) {
             cart[i].displayDetails();
         }
     }
 
     float checkout() {
         float total = 0;
-        // Use traditional for loop with index-based access
-        for (size_t i = 0; i < cart.size(); ++i) {
+        for (int i = 0; i < cart.size(); ++i) {
             total += cart[i].getPrice();
         }
         cout << "-------------------------------" << endl;
