@@ -11,7 +11,7 @@ protected:
     float price;
 
 public:
-    Product(const string name, float price) : name(name), price(price) {}
+    Product(const string& name, float price) : name(name), price(price) {}
 
     string getName() const {
         return name;
@@ -24,10 +24,7 @@ public:
     void displayDetails() const {
         cout << "-> " << name << " - Rs." << fixed << setprecision(2) << price << endl;
     }
-
-
 };
-
 
 class Customer {
 private:
@@ -43,9 +40,10 @@ public:
     }
 
     void removeFromCart(const string& productName) {
-        for (vector<Product>::iterator it = cart.begin(); it != cart.end(); ++it) {
-            if (it->getName() == productName) {
-                cart.erase(it);
+
+        for (int i = 0; i < cart.size(); ++i) {
+            if (cart[i].getName() == productName) {
+                cart.erase(cart.begin() + i);
                 cout << productName << " removed from cart." << endl;
                 return;
             }
@@ -54,22 +52,23 @@ public:
     }
 
     void displayCart() const {
-        cout << "-------------------------------" <<endl;
+        cout << "-------------------------------" << endl;
         cout << "Cart items for " << username << ":" << endl;
-        cout << "-------------------------------" <<endl;
-        for (vector<Product>::const_iterator it = cart.begin(); it != cart.end(); ++it) {
-            it->displayDetails();
+        cout << "-------------------------------" << endl;
+
+        for (int i = 0; i < cart.size(); ++i) {
+            cart[i].displayDetails();
         }
     }
 
     float checkout() {
         float total = 0;
-        for (vector<Product>::const_iterator it = cart.begin(); it != cart.end(); ++it) {
-            total += it->getPrice();
+        for (int i = 0; i < cart.size(); ++i) {
+            total += cart[i].getPrice();
         }
-        cout << "-------------------------------" <<endl;
+        cout << "-------------------------------" << endl;
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
-        cout << "-------------------------------" <<endl;
+        cout << "-------------------------------" << endl;
 
         cart.clear();
         return total;
@@ -105,14 +104,13 @@ int main() {
     int choice;
     bool done = false;
 
+    cout << "\nAvailable Products:" << endl;
+    for (int i = 0; i < productList.size(); ++i) {
+        cout << i + 1 << ". ";
+        productList[i].displayDetails();
+    }
+    cout << "-------------------------------" << endl;
 
-
-        cout << "\nAvailable Products:" << endl;
-        for (size_t i = 0; i < productList.size(); ++i) {
-            cout << i + 1 << ". ";
-            productList[i].displayDetails();
-        }
-        cout << "-------------------------------" <<endl;
     while (!done) {
         cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 view cart): ";
         cin >> choice;
@@ -135,15 +133,13 @@ int main() {
             customer.addToCart(productList[choice - 1]);
             cout << productList[choice - 1].getName() << " added to cart." << endl;
 
-        }else if(choice == -2){
+        } else if (choice == -2) {
             customer.displayCart();
             
-            }else {
+        } else {
             cout << "Invalid choice, please try again." << endl;
         }
     }
 
     return 0;
 }
-
-
