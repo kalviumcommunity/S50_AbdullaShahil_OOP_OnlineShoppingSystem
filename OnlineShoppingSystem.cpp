@@ -11,18 +11,21 @@ protected:
     float price;
 
 public:
-    Product(const string& name, float price) : name(name), price(price) {}
+    Product(const string& name, float price) {
+        this->name = name;
+        this->price = price;
+    }
 
     string getName() const {
-        return name;
+        return this->name;
     }
 
     float getPrice() const {
-        return price;
+        return this->price;
     }
 
     void displayDetails() const {
-        cout << "-> " << name << " - Rs." << fixed << setprecision(2) << price << endl;
+        cout << "-> " << this->name << " - Rs." << fixed << setprecision(2) << this->price << endl;
     }
 };
 
@@ -33,17 +36,19 @@ private:
     vector<Product> cart;
 
 public:
-    Customer(const string& username, const string& password) : username(username), password(password) {}
+    Customer(const string& username, const string& password) {
+        this->username = username;
+        this->password = password;
+    }
 
     void addToCart(const Product& product) {
-        cart.push_back(product);
+        this->cart.push_back(product);
     }
 
     void removeFromCart(const string& productName) {
-
-        for (int i = 0; i < cart.size(); ++i) {
-            if (cart[i].getName() == productName) {
-                cart.erase(cart.begin() + i);
+        for (int i = 0; i < this->cart.size(); ++i) {
+            if (this->cart[i].getName() == productName) {
+                this->cart.erase(this->cart.begin() + i);
                 cout << productName << " removed from cart." << endl;
                 return;
             }
@@ -53,24 +58,24 @@ public:
 
     void displayCart() const {
         cout << "-------------------------------" << endl;
-        cout << "Cart items for " << username << ":" << endl;
+        cout << "Cart items for " << this->username << ":" << endl;
         cout << "-------------------------------" << endl;
 
-        for (int i = 0; i < cart.size(); ++i) {
-            cart[i].displayDetails();
+        for (int i = 0; i < this->cart.size(); ++i) {
+            this->cart[i].displayDetails();
         }
     }
 
     float checkout() {
         float total = 0;
-        for (int i = 0; i < cart.size(); ++i) {
-            total += cart[i].getPrice();
+        for (int i = 0; i < this->cart.size(); ++i) {
+            total += this->cart[i].getPrice();
         }
         cout << "-------------------------------" << endl;
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
         cout << "-------------------------------" << endl;
 
-        cart.clear();
+        this->cart.clear();
         return total;
     }
 };
