@@ -33,16 +33,19 @@ class Customer {
 private:
     string username;
     string password;
-    vector<Product*> cart;  // Now a vector of pointers to Product
+    vector<Product*> cart; 
+
+    static int totalCustomers;
+    static float totalRevenue;
 
 public:
     Customer(const string& username, const string& password) {
         this->username = username;
         this->password = password;
+        totalCustomers++; 
     }
 
     ~Customer() {
-        // We do not delete the products here since they are managed externally
     }
 
     void addToCart(Product* product) {
@@ -75,6 +78,8 @@ public:
         for (int i = 0; i < this->cart.size(); ++i) {
             total += this->cart[i]->getPrice();
         }
+        totalRevenue += total;  
+
         cout << "-------------------------------" << endl;
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
         cout << "-------------------------------" << endl;
@@ -82,7 +87,15 @@ public:
         this->cart.clear(); 
         return total;
     }
+
+    static void displayStatistics() {
+        cout << "Total customers: " << totalCustomers << endl;
+        cout << "Total revenue: Rs." << fixed << setprecision(2) << totalRevenue << endl;
+    }
 };
+
+int Customer::totalCustomers = 0;
+float Customer::totalRevenue = 0;
 
 int main() {
     vector<Product*> productList; 
@@ -150,12 +163,13 @@ int main() {
         }
     }
 
-
     delete customer;
 
     for (auto product : productList) {
         delete product;  
     }
+
+    Customer::displayStatistics();
 
     return 0;
 }
