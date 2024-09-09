@@ -6,7 +6,7 @@
 using namespace std;
 
 class Product {
-protected:
+private:
     string name;
     float price;
 
@@ -16,12 +16,23 @@ public:
         this->price = price;
     }
 
+    // Getter for name
     string getName() const {
         return this->name;
     }
 
+    // Getter for price
     float getPrice() const {
         return this->price;
+    }
+
+    // Mutator for price
+    void setPrice(float price) {
+        if (price > 0) {
+            this->price = price;
+        } else {
+            cout << "Price must be greater than zero." << endl;
+        }
     }
 
     void displayDetails() const {
@@ -33,7 +44,7 @@ class Customer {
 private:
     string username;
     string password;
-    vector<Product*> cart; 
+    vector<Product*> cart;
 
     static int totalCustomers;
     static float totalRevenue;
@@ -48,10 +59,40 @@ public:
     ~Customer() {
     }
 
+    // Getter for username
+    string getUsername() const {
+        return this->username;
+    }
+
+    // Setter for username
+    void setUsername(const string& username) {
+        if (!username.empty()) {
+            this->username = username;
+        } else {
+            cout << "Username cannot be empty." << endl;
+        }
+    }
+
+    // Getter for password
+    string getPassword() const {
+        return this->password;
+    }
+
+    // Setter for password
+    void setPassword(const string& password) {
+        if (!password.empty()) {
+            this->password = password;
+        } else {
+            cout << "Password cannot be empty." << endl;
+        }
+    }
+
+    // Add product to cart
     void addToCart(Product* product) {
         this->cart.push_back(product);
     }
 
+    // Remove product from cart
     void removeFromCart(const string& productName) {
         for (int i = 0; i < this->cart.size(); ++i) {
             if (this->cart[i]->getName() == productName) {
@@ -63,6 +104,7 @@ public:
         cout << "Product not found in cart." << endl;
     }
 
+    // Display cart items
     void displayCart() const {
         cout << "-------------------------------" << endl;
         cout << "Cart items for " << this->username << ":" << endl;
@@ -73,6 +115,7 @@ public:
         }
     }
 
+    // Checkout
     float checkout() {
         float total = 0;
         for (int i = 0; i < this->cart.size(); ++i) {
@@ -84,7 +127,7 @@ public:
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
         cout << "-------------------------------" << endl;
 
-        this->cart.clear(); 
+        this->cart.clear();
         return total;
     }
 
@@ -134,7 +177,7 @@ int main() {
     cout << "-------------------------------" << endl;
 
     while (!done) {
-        cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 view cart): ";
+        cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 to view cart): ";
         cin >> choice;
 
         if (choice == 0) {
@@ -164,9 +207,8 @@ int main() {
     }
 
     delete customer;
-
     for (auto product : productList) {
-        delete product;  
+        delete product;
     }
 
     Customer::displayStatistics();
