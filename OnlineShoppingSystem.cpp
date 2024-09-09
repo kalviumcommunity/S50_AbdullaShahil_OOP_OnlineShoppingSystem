@@ -57,7 +57,13 @@ public:
     }
 
     ~Customer() {
+        for (Product* product : cart) {
+            delete product;
+        }
+        cart.clear(); 
+        cout << "Customer " << username << "'s cart has been cleared and memory deallocated." << endl;
     }
+
 
     // Getter for username
     string getUsername() const {
@@ -94,15 +100,17 @@ public:
 
     // Remove product from cart
     void removeFromCart(const string& productName) {
-        for (int i = 0; i < this->cart.size(); ++i) {
-            if (this->cart[i]->getName() == productName) {
-                this->cart.erase(this->cart.begin() + i);
-                cout << productName << " removed from cart." << endl;
-                return;
-            }
+    for (int i = 0; i < this->cart.size(); ++i) {
+        if (this->cart[i]->getName() == productName) {
+            delete this->cart[i]; 
+            this->cart.erase(this->cart.begin() + i); 
+            cout << productName << " removed from cart." << endl;
+            return;
         }
-        cout << "Product not found in cart." << endl;
     }
+    cout << "Product not found in cart." << endl;
+}
+
 
     // Display cart items
     void displayCart() const {
@@ -207,9 +215,6 @@ int main() {
     }
 
     delete customer;
-    for (auto product : productList) {
-        delete product;
-    }
 
     Customer::displayStatistics();
 
