@@ -5,131 +5,152 @@
 
 using namespace std;
 
-class Product {
-private:
+// Base Product class
+class Product
+{
+protected:
     string name;
     float price;
 
 public:
-    Product(const string& name, float price) {
+    Product(const string &name, float price)
+    {
         this->name = name;
         this->price = price;
     }
 
     // Getter for name
-    string getName() const {
+    string getName() const
+    {
         return this->name;
     }
 
     // Getter for price
-    float getPrice() const {
+    virtual float getPrice() const  // Virtual to allow overriding in derived classes
+    {
         return this->price;
     }
 
     // Mutator for price
-    void setPrice(float price) {
-        if (price > 0) {
+    void setPrice(float price)
+    {
+        if (price > 0)
+        {
             this->price = price;
-        } else {
+        }
+        else
+        {
             cout << "Price must be greater than zero." << endl;
         }
     }
 
-    void displayDetails() const {
+    virtual void displayDetails() const
+    {
         cout << "-> " << this->name << " - Rs." << fixed << setprecision(2) << this->price << endl;
     }
 };
 
-class Customer {
+// Derived class for discounted products - Single Inheritance
+class DiscountedProduct : public Product
+{
 private:
+    float discountPercentage;
+
+public:
+    DiscountedProduct(const string &name, float price, float discountPercentage)
+        : Product(name, price), discountPercentage(discountPercentage) {}
+
+    // Overriding getPrice to apply the discount
+    float getPrice() const override
+    {
+        return price * (1 - discountPercentage / 100);
+    }
+
+    void displayDetails() const override
+    {
+        cout << "-> " << name << " - Rs." << fixed << setprecision(2) << getPrice() << " (Discount: " << discountPercentage << "%)" << endl;
+    }
+};
+
+// Base class for customers
+class Customer
+{
+protected:
     string username;
     string password;
-    vector<Product*> cart;
+    vector<Product *> cart;
 
     static int totalCustomers;
     static float totalRevenue;
 
 public:
-    Customer(const string& username, const string& password) {
+    Customer(const string &username, const string &password)
+    {
         this->username = username;
         this->password = password;
-        totalCustomers++; 
+        totalCustomers++;
     }
 
-    ~Customer() {
-        for (Product* product : cart) {
+    virtual ~Customer()  // Virtual destructor for proper cleanup in derived classes
+    {
+        for (Product *product : cart)
+        {
             delete product;
         }
-        cart.clear(); 
+        cart.clear();
         cout << "Customer " << username << "'s cart has been cleared and memory deallocated." << endl;
     }
 
-
     // Getter for username
-    string getUsername() const {
+    string getUsername() const
+    {
         return this->username;
     }
 
-    // Setter for username
-    void setUsername(const string& username) {
-        if (!username.empty()) {
-            this->username = username;
-        } else {
-            cout << "Username cannot be empty." << endl;
-        }
-    }
-
-    // Getter for password
-    string getPassword() const {
-        return this->password;
-    }
-
-    // Setter for password
-    void setPassword(const string& password) {
-        if (!password.empty()) {
-            this->password = password;
-        } else {
-            cout << "Password cannot be empty." << endl;
-        }
-    }
-
     // Add product to cart
-    void addToCart(Product* product) {
+    void addToCart(Product *product)
+    {
         this->cart.push_back(product);
     }
 
     // Remove product from cart
-    void removeFromCart(const string& productName) {
-    for (int i = 0; i < this->cart.size(); ++i) {
-        if (this->cart[i]->getName() == productName) {
-            delete this->cart[i]; 
-            this->cart.erase(this->cart.begin() + i); 
-            cout << productName << " removed from cart." << endl;
-            return;
+    void removeFromCart(const string &productName)
+    {
+        for (int i = 0; i < this->cart.size(); ++i)
+        {
+            if (this->cart[i]->getName() == productName)
+            {
+                delete this->cart[i];
+                this->cart.erase(this->cart.begin() + i);
+                cout << productName << " removed from cart." << endl;
+                return;
+            }
         }
+        cout << "Product not found in cart." << endl;
     }
-    cout << "Product not found in cart." << endl;
-}
-
 
     // Display cart items
-    void displayCart() const {
+    virtual void displayCart() const
+    {
         cout << "-------------------------------" << endl;
         cout << "Cart items for " << this->username << ":" << endl;
         cout << "-------------------------------" << endl;
 
-        for (int i = 0; i < this->cart.size(); ++i) {
-            this->cart[i]->displayDetails();
+        for (Product *product : this->cart)
+        {
+            product->displayDetails();
         }
     }
 
-    // Checkout
-    float checkout() {
+    // Virtual checkout method
+    virtual float checkout()  // Marked as virtual to allow overriding
+    {
         float total = 0;
-        for (int i = 0; i < this->cart.size(); ++i) {
-            total += this->cart[i]->getPrice();
+        for (Product *product : this->cart)
+        {
+            total += product->getPrice();
         }
-        totalRevenue += total;  
+        totalRevenue += total;
 
         cout << "-------------------------------" << endl;
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
@@ -139,7 +160,8 @@ public:
         return total;
     }
 
-    static void displayStatistics() {
+    static void displayStatistics()
+    {
         cout << "Total customers: " << totalCustomers << endl;
         cout << "Total revenue: Rs." << fixed << setprecision(2) << totalRevenue << endl;
     }
@@ -148,23 +170,53 @@ public:
 int Customer::totalCustomers = 0;
 float Customer::totalRevenue = 0;
 
-int main() {
-    vector<Product*> productList; 
+// Derived class PremiumCustomer
+class PremiumCustomer : public Customer
+{
+public:
+    PremiumCustomer(const string &username, const string &password)
+        : Customer(username, password) {}
+
+    // Premium customers get 5% discount on their total purchase
+    float checkout() override
+    {
+        float total = Customer::checkout();
+        float discount = total * 0.05;
+        cout << "Premium customer discount (5%): Rs." << fixed << setprecision(2) << discount << endl;
+        return total - discount;
+    }
+};
+
+// Derived class LoyalCustomer from PremiumCustomer - Multilevel Inheritance
+class LoyalCustomer : public PremiumCustomer
+{
+public:
+    LoyalCustomer(const string &username, const string &password)
+        : PremiumCustomer(username, password) {}
+
+    // Loyal customers get an additional 10% discount on their total purchase
+    float checkout() override
+    {
+        float total = PremiumCustomer::checkout();
+        float additionalDiscount = total * 0.10;
+        cout << "Loyal customer additional discount (10%): Rs." << fixed << setprecision(2) << additionalDiscount << endl;
+        cout << "-------------------------------" << endl;
+
+        return total - additionalDiscount;
+    }
+};
+
+int main()
+{
+    vector<Product *> productList;
     productList.push_back(new Product("Laptop", 45999.99));
-    productList.push_back(new Product("Headphones", 1149.99));
+    productList.push_back(new DiscountedProduct("Headphones", 1149.99, 10));
+    productList.push_back(new DiscountedProduct("Smartphone", 30699.99, 15));
+    productList.push_back(new Product("Tablet", 20299.99));
+    productList.push_back(new Product("Smartwatch", 2199.99));
     productList.push_back(new Product("Mouse", 529.99));
     productList.push_back(new Product("Keyboard", 859.99));
     productList.push_back(new Product("Monitor", 10199.99));
-    productList.push_back(new Product("Smartphone", 30699.99));
-    productList.push_back(new Product("Tablet", 20299.99));
-    productList.push_back(new Product("Smartwatch", 2199.99));
-    productList.push_back(new Product("Printer", 4149.99));
-    productList.push_back(new Product("External Hard Drive", 2089.99));
-    productList.push_back(new Product("USB Flash Drive", 519.99));
-    productList.push_back(new Product("Webcam", 1049.99));
-    productList.push_back(new Product("Speakers", 1579.99));
-    productList.push_back(new Product("Router", 1089.99));
-    productList.push_back(new Product("Gaming Console", 2399.99));
 
     string username, password;
     cout << "Enter username: ";
@@ -172,44 +224,52 @@ int main() {
     cout << "Enter password: ";
     cin >> password;
 
-    Customer* customer = new Customer(username, password); 
+    // Using LoyalCustomer to demonstrate multilevel inheritance
+    LoyalCustomer *customer = new LoyalCustomer(username, password);
 
     int choice;
     bool done = false;
 
     cout << "\nAvailable Products:" << endl;
-    for (int i = 0; i < productList.size(); ++i) {
+    for (int i = 0; i < productList.size(); ++i)
+    {
         cout << i + 1 << ". ";
         productList[i]->displayDetails();
     }
     cout << "-------------------------------" << endl;
 
-    while (!done) {
+    while (!done)
+    {
         cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 to view cart): ";
         cin >> choice;
 
-        if (choice == 0) {
+        if (choice == 0)
+        {
             customer->displayCart();
             float totalAmount = customer->checkout();
             cout << "Thank you for shopping with us!" << endl;
-            cout << "Total paid amount: Rs." << fixed << setprecision(2) << totalAmount << endl;
+            cout << "-> Total paid amount: Rs." << fixed << setprecision(2) << totalAmount << endl;
             done = true;
-
-        } else if (choice == -1) {
+        }
+        else if (choice == -1)
+        {
             string productName;
             cout << "Enter the name of the product to remove from the cart: ";
             cin.ignore();
             getline(cin, productName);
             customer->removeFromCart(productName);
-
-        } else if (choice > 0 && choice <= static_cast<int>(productList.size())) {
+        }
+        else if (choice > 0 && choice <= static_cast<int>(productList.size()))
+        {
             customer->addToCart(productList[choice - 1]);
             cout << productList[choice - 1]->getName() << " added to cart." << endl;
-
-        } else if (choice == -2) {
+        }
+        else if (choice == -2)
+        {
             customer->displayCart();
-
-        } else {
+        }
+        else
+        {
             cout << "Invalid choice, please try again." << endl;
         }
     }
