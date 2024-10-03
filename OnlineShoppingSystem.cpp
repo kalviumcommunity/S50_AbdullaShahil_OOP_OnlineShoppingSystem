@@ -26,7 +26,7 @@ public:
     }
 
     // Getter for price
-    virtual float getPrice() const  // Virtual to allow overriding in derived classes
+    virtual float getPrice() const // Virtual to allow overriding in derived classes
     {
         return this->price;
     }
@@ -91,7 +91,7 @@ public:
         totalCustomers++;
     }
 
-    virtual ~Customer()  // Virtual destructor for proper cleanup in derived classes
+    virtual ~Customer() // Virtual destructor for proper cleanup in derived classes
     {
         for (Product *product : cart)
         {
@@ -107,10 +107,19 @@ public:
         return this->username;
     }
 
-    // Add product to cart
+    // Add product to cart (single product)
     void addToCart(Product *product)
     {
         this->cart.push_back(product);
+    }
+
+    // Overloaded function to add multiple products to cart
+    void addToCart(const vector<Product *> &products)
+    {
+        for (Product *product : products)
+        {
+            this->cart.push_back(product);
+        }
     }
 
     // Remove product from cart
@@ -143,7 +152,7 @@ public:
     }
 
     // Virtual checkout method
-    virtual float checkout()  // Marked as virtual to allow overriding
+    virtual float checkout() // Marked as virtual to allow overriding
     {
         float total = 0;
         for (Product *product : this->cart)
