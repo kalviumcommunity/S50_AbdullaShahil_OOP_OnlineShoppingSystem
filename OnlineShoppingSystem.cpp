@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// Base Product class
+// Abstract Product class
 class Product
 {
 protected:
@@ -25,32 +25,36 @@ public:
         return this->name;
     }
 
-    // Getter for price
-    virtual float getPrice() const // Virtual to allow overriding in derived classes
+    // Pure virtual function
+    virtual float getPrice() const = 0;
+
+    // Virtual function
+    virtual void displayDetails() const = 0; 
+
+    // Virtual destructor
+    virtual ~Product() {}
+};
+
+// Derived class for standard products
+class StandardProduct : public Product
+{
+public:
+    StandardProduct(const string &name, float price)
+        : Product(name, price) {}
+
+    // Overriding getPrice to return base price
+    float getPrice() const override
     {
         return this->price;
     }
 
-    // Mutator for price
-    void setPrice(float price)
-    {
-        if (price > 0)
-        {
-            this->price = price;
-        }
-        else
-        {
-            cout << "Price must be greater than zero." << endl;
-        }
-    }
-
-    virtual void displayDetails() const
+    void displayDetails() const override
     {
         cout << "-> " << this->name << " - Rs." << fixed << setprecision(2) << this->price << endl;
     }
 };
 
-// Derived class for discounted products - Single Inheritance
+// Derived class for discounted products
 class DiscountedProduct : public Product
 {
 private:
@@ -60,7 +64,7 @@ public:
     DiscountedProduct(const string &name, float price, float discountPercentage)
         : Product(name, price), discountPercentage(discountPercentage) {}
 
-    // Overriding getPrice to apply the discount
+    // Overriding getPrice to apply discount
     float getPrice() const override
     {
         return price * (1 - discountPercentage / 100);
@@ -101,25 +105,10 @@ public:
         cout << "Customer " << username << "'s cart has been cleared and memory deallocated." << endl;
     }
 
-    // Getter for username
-    string getUsername() const
-    {
-        return this->username;
-    }
-
-    // Add product to cart (single product)
+    // Add product to cart
     void addToCart(Product *product)
     {
         this->cart.push_back(product);
-    }
-
-    // Overloaded function to add multiple products to cart
-    void addToCart(const vector<Product *> &products)
-    {
-        for (Product *product : products)
-        {
-            this->cart.push_back(product);
-        }
     }
 
     // Remove product from cart
@@ -152,7 +141,7 @@ public:
     }
 
     // Virtual checkout method
-    virtual float checkout() // Marked as virtual to allow overriding
+    virtual float checkout()
     {
         float total = 0;
         for (Product *product : this->cart)
@@ -179,14 +168,14 @@ public:
 int Customer::totalCustomers = 0;
 float Customer::totalRevenue = 0;
 
-// Derived class PremiumCustomer
+// Derived class PremiumCustomer with discounts
 class PremiumCustomer : public Customer
 {
 public:
     PremiumCustomer(const string &username, const string &password)
         : Customer(username, password) {}
 
-    // Premium customers get 5% discount on their total purchase
+    // Premium customers get a 5% discount on their total purchase
     float checkout() override
     {
         float total = Customer::checkout();
@@ -196,7 +185,7 @@ public:
     }
 };
 
-// Derived class LoyalCustomer from PremiumCustomer - Multilevel Inheritance
+// Derived class LoyalCustomer - Multilevel Inheritance
 class LoyalCustomer : public PremiumCustomer
 {
 public:
@@ -218,14 +207,14 @@ public:
 int main()
 {
     vector<Product *> productList;
-    productList.push_back(new Product("Laptop", 45999.99));
+    productList.push_back(new StandardProduct("Laptop", 45999.99));
     productList.push_back(new DiscountedProduct("Headphones", 1149.99, 10));
     productList.push_back(new DiscountedProduct("Smartphone", 30699.99, 15));
-    productList.push_back(new Product("Tablet", 20299.99));
-    productList.push_back(new Product("Smartwatch", 2199.99));
-    productList.push_back(new Product("Mouse", 529.99));
-    productList.push_back(new Product("Keyboard", 859.99));
-    productList.push_back(new Product("Monitor", 10199.99));
+    productList.push_back(new StandardProduct("Tablet", 20299.99));
+    productList.push_back(new StandardProduct("Smartwatch", 2199.99));
+    productList.push_back(new StandardProduct("Mouse", 529.99));
+    productList.push_back(new StandardProduct("Keyboard", 859.99));
+    productList.push_back(new StandardProduct("Monitor", 10199.99));
 
     string username, password;
     cout << "Enter username: ";
@@ -246,7 +235,7 @@ int main()
         productList[i]->displayDetails();
     }
     cout << "-------------------------------" << endl;
-
+    
     while (!done)
     {
         cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 to view cart): ";
