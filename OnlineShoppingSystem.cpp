@@ -29,7 +29,7 @@ public:
     virtual float getPrice() const = 0;
 
     // Virtual function
-    virtual void displayDetails() const = 0; 
+    virtual void displayDetails() const = 0;
 
     // Virtual destructor
     virtual ~Product() {}
@@ -76,50 +76,28 @@ public:
     }
 };
 
-// Base class for customers
-class Customer
+// New Cart class - responsible only for cart management
+class Cart
 {
-protected:
-    string username;
-    string password;
-    vector<Product *> cart;
-
-    static int totalCustomers;
-    static float totalRevenue;
+private:
+    vector<Product *> products;
 
 public:
-    Customer(const string &username, const string &password)
+    // Add product to the cart
+    void addProduct(Product *product)
     {
-        this->username = username;
-        this->password = password;
-        totalCustomers++;
+        products.push_back(product);
     }
 
-    virtual ~Customer() // Virtual destructor for proper cleanup in derived classes
+    // Remove product from the cart
+    void removeProduct(const string &productName)
     {
-        for (Product *product : cart)
+        for (int i = 0; i < products.size(); ++i)
         {
-            delete product;
-        }
-        cart.clear();
-        cout << "Customer " << username << "'s cart has been cleared and memory deallocated." << endl;
-    }
-
-    // Add product to cart
-    void addToCart(Product *product)
-    {
-        this->cart.push_back(product);
-    }
-
-    // Remove product from cart
-    void removeFromCart(const string &productName)
-    {
-        for (int i = 0; i < this->cart.size(); ++i)
-        {
-            if (this->cart[i]->getName() == productName)
+            if (products[i]->getName() == productName)
             {
-                delete this->cart[i];
-                this->cart.erase(this->cart.begin() + i);
+                delete products[i];
+                products.erase(products.begin() + i);
                 cout << productName << " removed from cart." << endl;
                 return;
             }
@@ -127,42 +105,101 @@ public:
         cout << "Product not found in cart." << endl;
     }
 
-    // Display cart items
-    virtual void displayCart() const
+    // Display all products in the cart
+    void displayCart() const
     {
         cout << "-------------------------------" << endl;
-        cout << "Cart items for " << this->username << ":" << endl;
+        cout << "Cart items:" << endl;
         cout << "-------------------------------" << endl;
 
-        for (Product *product : this->cart)
+        for (Product *product : products)
         {
             product->displayDetails();
         }
     }
 
-    // Virtual checkout method
-    virtual float checkout()
+    // Calculate total price of all products in the cart
+    float calculateTotal()
     {
         float total = 0;
-        for (Product *product : this->cart)
+        for (Product *product : products)
         {
             total += product->getPrice();
         }
+        return total;
+    }
+
+    // Destructor for clearing the cart memory
+    ~Cart()
+    {
+        for (Product *product : products)
+        {
+            delete product;
+        }
+        products.clear();
+        cout << "Cart memory deallocated." << endl;
+    }
+};
+
+// Refactored Customer class
+class Customer
+{
+protected:
+    string username;
+    string password;
+    Cart cart; // Customer "has a" Cart (composition)
+
+    static int totalCustomers;
+    static float totalRevenue;
+
+public:
+    // Constructor for Customer
+    Customer(const string &username, const string &password)
+    {
+        this->username = username;
+        this->password = password;
+        totalCustomers++;
+    }
+
+    // Add product to the customer's cart
+    void addToCart(Product *product)
+    {
+        cart.addProduct(product);
+    }
+
+    // Remove product from the customer's cart
+    void removeFromCart(const string &productName)
+    {
+        cart.removeProduct(productName);
+    }
+
+    // Display the customer's cart
+    void displayCart() const
+    {
+        cart.displayCart();
+    }
+
+    // Checkout - Calculate total and clear cart
+    virtual float checkout()
+    {
+        float total = cart.calculateTotal();
         totalRevenue += total;
 
         cout << "-------------------------------" << endl;
         cout << "Total amount to pay: Rs." << fixed << setprecision(2) << total << endl;
         cout << "-------------------------------" << endl;
 
-        this->cart.clear();
         return total;
     }
 
+    // Static function to display statistics
     static void displayStatistics()
     {
         cout << "Total customers: " << totalCustomers << endl;
         cout << "Total revenue: Rs." << fixed << setprecision(2) << totalRevenue << endl;
     }
+
+    virtual ~Customer() {}
 };
 
 int Customer::totalCustomers = 0;
@@ -204,6 +241,7 @@ public:
     }
 };
 
+// Main function to demonstrate functionality
 int main()
 {
     vector<Product *> productList;
@@ -235,7 +273,7 @@ int main()
         productList[i]->displayDetails();
     }
     cout << "-------------------------------" << endl;
-    
+
     while (!done)
     {
         cout << "Enter the number of the product to add to cart (0 to checkout, -1 to remove an item from the cart, -2 to view cart): ";
